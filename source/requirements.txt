@@ -1,0 +1,6 @@
+# Built and tested with Python 3.11, numpy 2.4, Pillow 12.1 and scipy 1.17.
+numpy
+Pillow
+scipy
+# Only needed to render the MP4: one easy way to get an ffmpeg binary.
+imageio-ffmpeg

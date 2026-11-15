@@ -1,0 +1,6 @@
+# outputs of the build scripts in source/
+source/build/
+source/tools/
+source/*.html
+__pycache__/
+*.pyc

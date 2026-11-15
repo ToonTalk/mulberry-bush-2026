@@ -1,0 +1,187 @@
+<title>Mulberry Bush 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #09070b;
+    --panel: #131017;
+    --line: #2b2531;
+    --fg: #f0e3ea;
+    --muted: #a294a8;
+    --faint: #64586b;
+    --rose: #ff4d8f;
+    --teal: #38dbbd;
+    --violet: #806bff;
+    --gold: #ffc24d;
+    --serif: "Cormorant Garamond", Garamond, "EB Garamond", Georgia, serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  [hidden] { display: none !important; }
+  body { margin: 0; font-family: var(--serif); font-size: 19px; font-weight: 500; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  .wrap {
+    box-sizing: border-box;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-block: 20px 40px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .head { width: 100%; max-width: var(--film); display: flex; align-items: baseline; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  h1 { margin: 0; font-weight: 600; font-size: 30px; letter-spacing: 0.01em; text-wrap: balance; }
+  h1 span { color: var(--muted); font-weight: 400; }
+  .sub { margin: 0; color: var(--muted); font-style: italic; font-size: 19px; }
+  :root { --film: min(100%, 1080px, calc(100svh - 215px)); }
+  @supports not (height: 100svh) { :root { --film: min(100%, 1080px, calc(100vh - 215px)); } }
+  .stage { position: relative; width: var(--film); min-width: min(100%, 300px); aspect-ratio: 1 / 1; max-width: 100%; background: #000; }
+  .stage canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+  .stage:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; display: flex; align-items: center; justify-content: center; background: #000; }
+  .stage:fullscreen canvas { width: min(100vw, 100vh); height: min(100vw, 100vh); }
+  .big-play {
+    position: absolute; inset: 0; margin: auto; width: fit-content; height: fit-content;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    background: none; border: 0; color: var(--fg); font: inherit; cursor: pointer; padding: 24px;
+  }
+  .big-play .t { font-size: clamp(34px, 6vw, 60px); font-weight: 400; letter-spacing: 0.01em; line-height: 1; color: #f0d6e6; }
+  .big-play .s { font-style: italic; color: #cdaad7; font-size: clamp(17px, 2.4vw, 22px); margin-top: -8px; }
+  .big-play .ring {
+    width: 74px; height: 74px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: radial-gradient(circle, rgba(255, 194, 77, .20), rgba(255, 194, 77, 0) 70%);
+    border: 1px solid rgba(255, 194, 77, .55);
+    transition: transform .2s, border-color .2s;
+  }
+  .big-play:hover .ring { transform: scale(1.06); border-color: var(--gold); }
+  .big-play .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .big-play:disabled { cursor: progress; }
+  .big-play:disabled .ring { opacity: .45; }
+  body.started .big-play { display: none; }
+  .err { position: absolute; inset: auto 16px 16px; padding: 12px 14px; background: #2a1018; border: 1px solid #6b2a3b; color: #ffd9e4; font-family: var(--mono); font-size: 13px; }
+
+  .controls {
+    width: var(--film); max-width: 100%; box-sizing: border-box;
+    padding: 10px 0 0;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+  .row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin-top: 8px; }
+  .row .grow { flex: 1 1 0; }
+  .btn {
+    width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--panel); border: 1px solid var(--line); color: var(--fg); cursor: pointer; padding: 0;
+  }
+  .btn:hover:not(:disabled) { border-color: var(--faint); }
+  .btn:disabled { opacity: .4; cursor: progress; }
+  .btn svg { width: 14px; height: 14px; fill: currentColor; }
+  .btn .i-pause, .btn.is-playing .i-play { display: none; }
+  .btn.is-playing .i-pause { display: block; }
+  .btn .i-off, .btn.is-muted .i-on { display: none; }
+  .btn.is-muted .i-off { display: block; }
+  .time { font-variant-numeric: tabular-nums; color: var(--fg); white-space: nowrap; }
+  .vol { display: flex; align-items: center; gap: 10px; }
+  #vol { -webkit-appearance: none; appearance: none; width: 92px; height: 22px; margin: 0; background: transparent; cursor: pointer; --v: 100%; }
+  #vol::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(to right, var(--gold) var(--v), var(--line) var(--v)); }
+  #vol::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 13px; height: 13px; margin-top: -4.5px; border: 0; border-radius: 50%; background: var(--fg); }
+  #vol::-moz-range-track { height: 4px; border-radius: 2px; background: var(--line); }
+  #vol::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--gold); }
+  #vol::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--fg); }
+  #vol:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; border-radius: 2px; }
+  .time .sep { color: var(--faint); margin: 0 4px; }
+  .strip { position: relative; min-width: 0; padding: 6px 0 4px; cursor: pointer; touch-action: none; outline: none; }
+  .strip:focus-visible .segs { outline: 1px solid var(--gold); outline-offset: 3px; }
+  .segs { display: flex; gap: 2px; }
+  .seg { flex-basis: 0; min-width: 0; }
+  .seg i { display: block; height: 6px; background: var(--line); border-radius: 1px; transition: background .3s; }
+  .seg span { display: block; margin-top: 6px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: clip; }
+  .seg.cur i { background: #4a3f52; }
+  .seg.cur span { color: var(--fg); }
+  .seg.narrow span { visibility: hidden; }
+  #playhead { position: absolute; top: 2px; width: 2px; height: 14px; margin-left: -1px; background: var(--gold); box-shadow: 0 0 8px rgba(255, 194, 77, .7); pointer-events: none; }
+  .bar { display: flex; align-items: center; gap: 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .bar #barno { min-width: 7.2ch; color: var(--fg); }
+  #secname { color: var(--fg); text-transform: uppercase; letter-spacing: .1em; font-size: 11px; }
+  .beats { display: inline-flex; gap: 3px; }
+  .beats i { width: 5px; height: 5px; border-radius: 50%; background: var(--line); }
+  .beats i:nth-child(4) { margin-left: 4px; }
+  .beats i.on { background: var(--gold); box-shadow: 0 0 6px rgba(255, 194, 77, .8); }
+  .beats i:nth-child(1).on, .beats i:nth-child(4).on { background: #ffe1a3; }
+  .meta { width: var(--film); max-width: 100%; display: flex; justify-content: space-between; gap: 6px 18px; flex-wrap: wrap; margin-top: 18px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); letter-spacing: .02em; }
+  .meta .status { color: var(--fg); }
+  .note { width: var(--film); max-width: 100%; margin: 16px 0 0; color: var(--muted); font-size: 18.5px; max-width: min(var(--film), 68ch); align-self: center; }
+  .note b { font-weight: 600; color: var(--fg); }
+  .note a { color: var(--teal); text-underline-offset: 3px; }
+  .note a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .lanterns { display: inline-flex; gap: 5px; vertical-align: middle; margin-right: 6px; }
+  .lanterns i { width: 7px; height: 7px; border-radius: 50%; }
+  @media (max-width: 640px) {
+    body { font-size: 18px; }
+    h1 { font-size: 26px; }
+    .seg span { display: none; }
+    .row { gap: 10px 8px; }
+    .vol { order: 5; flex: 1 1 100%; }
+    #vol { flex: 1 1 auto; }
+    .bar { gap: 8px; }
+    .beats { display: none; }
+    :root { --film: 100%; }
+  }
+</style>
+
+<main class="wrap">
+  <header class="head">
+    <h1>Mulberry Bush <span>2026</span></h1>
+    <p class="sub">a round for four dancers, drawn and played live in your browser</p>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="film" width="1080" height="1080" aria-label="The film Mulberry Bush, drawn live"></canvas>
+    <button class="big-play" id="bigplay">
+      <span class="t">Mulberry Bush</span>
+      <span class="s">a round for four dancers</span>
+      <span class="ring"><svg width="22" height="22" viewBox="0 0 24 24" fill="#ffc24d" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span>
+      <span class="lbl">play the film</span>
+    </button>
+    <div class="err" id="err" hidden></div>
+  </div>
+
+  <div class="controls">
+    <div class="strip" id="strip" role="slider" tabindex="0" aria-label="Position in the film" aria-valuemin="0" aria-valuemax="180" aria-valuenow="0">
+      <div class="segs" id="segs"></div>
+      <div id="playhead" style="left:0%"></div>
+    </div>
+    <div class="row">
+    <button class="btn" id="play" aria-label="Play">
+      <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+      <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>
+    </button>
+    <div class="time"><span id="tcur">0:00</span><span class="sep">/</span><span id="ttot">3:00</span></div>
+    <div class="bar" title="The film's clock: bars of 6/8, six eighths each"><span id="barno">bar 1</span><span class="beats"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="secname">dark</span></div>
+    <span class="grow"></span>
+    <div class="vol">
+    <button class="btn" id="mute" aria-label="Mute">
+      <svg class="i-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16 8.5a5 5 0 0 1 0 7l-1.2-1.2a3.3 3.3 0 0 0 0-4.6zM18.4 6a8.5 8.5 0 0 1 0 12l-1.2-1.2a6.8 6.8 0 0 0 0-9.6z"/></svg>
+      <svg class="i-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16.2 9.2l1.2-1.2 2.1 2.1 2.1-2.1 1.2 1.2-2.1 2.1 2.1 2.1-1.2 1.2-2.1-2.1-2.1 2.1-1.2-1.2 2.1-2.1z"/></svg>
+    </button>
+    <input type="range" id="vol" min="0" max="100" step="1" value="100" aria-label="Volume">
+    </div>
+    <button class="btn" id="fs" aria-label="Full screen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v2H6v4H4zM14 4h6v6h-2V6h-4zM4 14h2v4h4v2H4zM18 14h2v6h-6v-2h4z"/></svg>
+    </button>
+    </div>
+  </div>
+
+  <div class="meta">
+    <span class="status" id="status">Unpacking the bush</span>
+    <span><span class="lanterns"><i style="background:var(--rose)"></i><i style="background:var(--teal)"></i><i style="background:var(--violet)"></i><i style="background:var(--gold)"></i></span>1080 × 1080 · <span id="perf">–</span></span>
+  </div>
+
+  <p class="note">Nothing here is a recording. Each frame is drawn as you watch, with WebGL, from the same grown bush, the same 1,392 footprints and the same choreography as the 2026 film. The round is synthesised note by note when the page opens, from the film's own score of 3,413 sounds. <b>Space</b> plays and pauses, <b>← →</b> skip five seconds, <b>↑ ↓</b> change the volume, <b>M</b> mutes, <b>F</b> fills the screen. <a href="https://toontalk.github.io/mulberry-bush-2026/making-of.html">How it was made</a> · <a href="https://github.com/ToonTalk/mulberry-bush-2026">Source code</a></p>
+</main>
+
+<script type="text/plain" id="data">{{DATA}}</script>
+<script type="text/plain" id="src-ground">{{GROUND_WORKER}}</script>
+<script type="text/plain" id="src-audio">{{AUDIO_WORKER}}</script>
+<script id="src-tl">{{TIMELINE}}</script>
+<script>{{MAIN}}</script>

@@ -1,6 +1,7 @@
 # Mulberry Bush (2026)
 
-**Watch it: https://toontalk.github.io/mulberry-bush-2026/**
+**Watch it: https://toontalk.github.io/mulberry-bush-2026/**  
+**How it was made: https://toontalk.github.io/mulberry-bush-2026/making-of.html**
 
 A round for four dancers, after the 1976 film and dance *Mulberry Bush* by Ken Kahn.
 
